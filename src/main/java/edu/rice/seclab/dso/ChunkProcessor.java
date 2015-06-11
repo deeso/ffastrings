@@ -17,7 +17,6 @@ public class ChunkProcessor extends Thread {
 	private Long myChunkOffset = 0L;
 	private int myMaxKeyLength = 0;
 	private long myBaseOffset;
-	IHashFunction myHashFn = null;
 	String myFilename;
 	Integer matches = 0;
 	File myFile;
@@ -84,21 +83,22 @@ public class ChunkProcessor extends Thread {
 		Long pos = 0L;
 		while (pos  < myChunk.length){
 			Long strEndPos = myStringMethods.getLength(myChunk, pos);
-			if (pos == strEndPos) {
+			
+			if (pos == 0) {
 				pos += 1;
 			} else if (strEndPos < myStringMethods.getMinLen()) {
 				pos += (strEndPos+1);
 			} else {
 				synchronized (myKeyInfo) {
-					byte [] val = new byte[(int) (strEndPos-pos)];
+					byte [] val = new byte[strEndPos.intValue()];
 					System.arraycopy(myChunk, pos.intValue(), val, 0, strEndPos.intValue());
 					StringInfo si = new StringInfo(myFilename, pos+calculateActualOffset(), val, myStringMethods);
 					myKeyInfo.put(pos, si);
+					System.out.println(String.format("Found string @ %08x %s sizeof(%d)", pos+strEndPos, si.toString(), strEndPos.intValue()));
 				}
 				pos += (strEndPos+1);
 				matches++;
 			}
-			
 		}
 		return matches;
 	}

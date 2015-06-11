@@ -1,8 +1,12 @@
 package edu.rice.seclab.dso;
 
+import java.util.HashSet;
+
 import com.google.common.base.CharMatcher;
 
 public class WCharInterpreter implements IStringInterpreter {
+	static public HashSet<Byte> BYTES = null;
+	static public HashSet<Byte> WHITE_SPACE = null;
 
 	static public final String ENCODING = "wchar";
 	private static final Integer MAX_CHAR_SIZE = 1;
@@ -100,13 +104,27 @@ public class WCharInterpreter implements IStringInterpreter {
 	}
 	
 	public boolean preByteCheck(byte[] myBytes, int pos) {
-		return myBytes[(int)pos] == 0 && pos+1 < myBytes.length;
+		return preByteCheck(myBytes[pos]) && pos+1 < myBytes.length;
 	}
-	
-	public boolean isValidChar(byte[] myBytes, long pos) {
-		
-		return  preByteCheck(myBytes, (int) pos) &&
-				CharMatcher.ASCII.matches((char) (myBytes[(int) pos+1] & 0xff));
+	public boolean isValidChar(byte b) {
+		if (BYTES == null || WHITE_SPACE == null) {
+			BYTES = new HashSet<Byte>();
+			WHITE_SPACE = new HashSet<Byte>();
+			WHITE_SPACE.add((byte) 0x9);
+			WHITE_SPACE.add((byte) 0xa);
+			WHITE_SPACE.add((byte) 0xd);
+			WHITE_SPACE.add((byte) 32);
+			BYTES.add((byte) 0x9);
+			BYTES.add((byte) 0xa);
+			BYTES.add((byte) 0xd);
+			for (byte a = 32; a < 127; a++)
+				BYTES.add(a);
+		}
+		return BYTES.contains(b);
+	}
+
+	private boolean preByteCheck(byte b) {
+		return b == 0;
 	}
 
 	public boolean isWhiteSpace(byte[] mybytes) {
@@ -114,8 +132,7 @@ public class WCharInterpreter implements IStringInterpreter {
 	}
 
 	public boolean isWhiteSpace(byte[] myBytes, long pos) {
-		return  preByteCheck(myBytes, (int) pos) &&
-				CharMatcher.WHITESPACE.matches((char) (myBytes[(int) pos] & 0xff));
+		return  preByteCheck(myBytes, (int) pos) && WHITE_SPACE.contains(myBytes[(int) pos]);
 	}
 
 	public Long getStringLength(byte[] myBytes) {
@@ -130,4 +147,9 @@ public class WCharInterpreter implements IStringInterpreter {
 		Long cnt = getLength(myBytes, pos, end);
 		return cnt/CHAR_SIZE;
 	}
+
+	public boolean isValidChar(byte[] myBytes, long pos) {
+		return preByteCheck(myBytes[(int) pos]) && isValidChar(myBytes[(int) pos+1]);
+	}
+
 }

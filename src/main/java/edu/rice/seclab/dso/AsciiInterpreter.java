@@ -1,10 +1,13 @@
 package edu.rice.seclab.dso;
 
 
+import java.util.HashSet;
+
 import com.google.common.base.CharMatcher;
 
 public class AsciiInterpreter implements IStringInterpreter {
-
+	static public HashSet<Byte> BYTES = null;
+	static public HashSet<Byte> WHITE_SPACE = null;
 	static public final String ENCODING = "ascii";
 	private static final Integer MAX_CHAR_SIZE = 1;
 	private static final Integer MIN_CHAR_SIZE = 1;
@@ -15,7 +18,23 @@ public class AsciiInterpreter implements IStringInterpreter {
 	public String getEncoding() {
 		return ENCODING;
 	}
-
+	
+	public boolean isValidChar(byte b) {
+		if (BYTES == null || WHITE_SPACE == null) {
+			BYTES = new HashSet<Byte>();
+			WHITE_SPACE = new HashSet<Byte>();
+			WHITE_SPACE.add((byte) 0x9);
+			WHITE_SPACE.add((byte) 0xa);
+			WHITE_SPACE.add((byte) 0xd);
+			WHITE_SPACE.add((byte) 32);
+			BYTES.add((byte) 0x9);
+			BYTES.add((byte) 0xa);
+			BYTES.add((byte) 0xd);
+			for (byte a = 32; a < 127; a++)
+				BYTES.add(a);
+		}
+		return BYTES.contains(b);
+	}
 	public Long getLength(byte[] myBytes) {
 		return getLength(myBytes, 0L, (long)myBytes.length);
 	}
@@ -23,7 +42,8 @@ public class AsciiInterpreter implements IStringInterpreter {
 	public Long getLength(byte[] myBytes, Long pos, Long end) {
 		long cnt = 0;
 		for (; pos < end; pos += CHAR_SIZE) {
-			if (isValidChar(myBytes, pos)){
+			boolean x =isValidChar(myBytes, pos); 
+			if (x){
 				cnt++;
 			} else {
 				break;
@@ -101,7 +121,7 @@ public class AsciiInterpreter implements IStringInterpreter {
 	}
 
 	public boolean isValidChar(byte[] myBytes, long pos) {
-		return CharMatcher.ASCII.matches((char) (myBytes[(int) pos] & 0xff));
+		return isValidChar(myBytes[(int) pos]);
 	}
 
 	public boolean isWhiteSpace(byte[] mybytes) {
@@ -109,7 +129,7 @@ public class AsciiInterpreter implements IStringInterpreter {
 	}
 
 	public boolean isWhiteSpace(byte[] myBytes, long pos) {
-		return CharMatcher.WHITESPACE.matches((char) (myBytes[(int) pos] & 0xff));
+		return WHITE_SPACE.contains(myBytes[(int) pos]);
 	}
 
 	public Long getStringLength(byte[] myBytes) {

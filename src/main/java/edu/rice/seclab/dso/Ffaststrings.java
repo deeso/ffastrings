@@ -129,6 +129,8 @@ public class Ffaststrings {
 			myExecutor = Executors.newFixedThreadPool(numThreads);
 			myTargetFiles = Utils.readDirectoryFilenames(myMemDump);
 			myLiveUpdate = liveUpdate;
+			for (File file : myTargetFiles)
+				myStringInfoMap.put(file.getAbsolutePath(), new HashMap<Long, StringInfo>());
 		}
 				
 		static void liveUpdate(String filename, long offset, String key) {
@@ -308,13 +310,12 @@ public class Ffaststrings {
 				}
 				for (IStringInterpreter stype : stringTypes) {
 					Runnable cp = null;
-					cp = new ChunkProcessor(file,offset,res,myStringInfoMap.get(file.getName()),stype, myLiveUpdate);
+					cp = new ChunkProcessor(file,offset,res,myStringInfoMap.get(file.getAbsolutePath()),stype, myLiveUpdate);
 					Future<?> p = myExecutor.submit(cp);
 					myThreadFutures.add(p);
 				}
 			}
 		}
-
 		
 		public static Options getOptions() {
 			return myOptions;
@@ -332,7 +333,6 @@ public class Ffaststrings {
 			boolean liveUpdate = false;
 			try {
 				cli = parser.parse(Ffaststrings.getOptions(), args);
-				binary_strings_file = cli.hasOption(BINARY_STRING_FILE) ? cli.getOptionValue(BINARY_STRING_FILE) : null;
 				memory_dump_file = cli.hasOption(BINARY_FILE) ? cli.getOptionValue(BINARY_FILE) : null;
 				if (cli.hasOption(NUM_THREADS)) num_scanning_threads =  cli.getOptionValue(NUM_THREADS);
 				if (cli.hasOption(START_OFFSET)) offset_start = cli.getOptionValue(START_OFFSET);
@@ -356,14 +356,8 @@ public class Ffaststrings {
 			Integer numThreads = Utils.tryParseHexNumber(num_scanning_threads);
 			Long offset = Utils.tryParseHexLongNumber(offset_start);
 
-			if (binary_strings_file != null) {
-				fbs = new Ffaststrings(memory_dump_file, offset, numThreads, liveUpdate);			
-			}else if (!cli.getArgList().isEmpty()){
-				fbs = new Ffaststrings(memory_dump_file, offset, numThreads, liveUpdate);
-			} else {
-				System.err.println(String.format("ERROR: %s list of binary strings is required or specify binary strings as parameters.", BINARY_STRING_FILE));
-				return;			
-			}
+			fbs = new Ffaststrings(memory_dump_file, offset, numThreads, liveUpdate);			
+			
 			
 			if (fbs != null) {
 				fbs.executeFileScans();

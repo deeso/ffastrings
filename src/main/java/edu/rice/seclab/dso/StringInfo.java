@@ -137,4 +137,8 @@ public class StringInfo {
 		return myStringMethods;
 	}
 	
+	public String toString() {
+		return myStringMethods.printableString(myBytes);
+	}
+	
 }

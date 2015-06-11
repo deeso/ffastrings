@@ -20,8 +20,9 @@ public class Utils {
 	public static ArrayList<IStringInterpreter> allStringTypes () {
 		if (stringTypes == null) {
 			stringTypes = new ArrayList<IStringInterpreter>();
-			// Add plain ascii
-			// Add double byte string
+			stringTypes.add(new AsciiInterpreter());
+			stringTypes.add(new WCharInterpreter());
+			// Add other string types
 			// ...
 		}
 		return stringTypes;
