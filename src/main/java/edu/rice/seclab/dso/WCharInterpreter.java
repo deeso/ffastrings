@@ -14,6 +14,7 @@ public class WCharInterpreter implements IStringInterpreter {
 	static int CHAR_SIZE = 2;
 	static long min_len = 4;
 	static long max_len = Integer.MAX_VALUE;
+	private boolean myLiveUpdate;
 
 	public String getEncoding() {
 		return ENCODING;
@@ -40,7 +41,11 @@ public class WCharInterpreter implements IStringInterpreter {
 	}
 
 	public String printableString(byte[] myBytes) {
-		return new String(myBytes);
+		char [] chars = new char[myBytes.length/2];
+		for (int pos = 0; pos < chars.length; pos++)
+			chars[pos] = (char) (myBytes[pos+1] & 0xff);
+		
+		return new String(chars);
 	}
 
 	public String noWhiteSpaceString(byte[] myBytes) {
@@ -56,7 +61,7 @@ public class WCharInterpreter implements IStringInterpreter {
 		return noNewLineString(myBytes, "--linebreak--");
 	}
 	public String noNewLineString(byte[] myBytes, String replace) {
-		return printableString(myBytes).replace("\n", replace);
+		return printableString(myBytes).replace("\r", replace).replace("\n", replace);
 	}
 
 	public byte[] hashAs(byte[] myBytes, String hashAlgo) {
@@ -90,6 +95,10 @@ public class WCharInterpreter implements IStringInterpreter {
 	public void setMinLen(long v) {
 		min_len = v;
 	}
+	
+	public void setLiveUpdate(boolean x) {
+		myLiveUpdate = x;
+	}
 
 	public long getMaxLen() {
 		return max_len*CHAR_SIZE;
@@ -115,8 +124,8 @@ public class WCharInterpreter implements IStringInterpreter {
 			WHITE_SPACE.add((byte) 0xd);
 			WHITE_SPACE.add((byte) 32);
 			BYTES.add((byte) 0x9);
-			BYTES.add((byte) 0xa);
-			BYTES.add((byte) 0xd);
+			//BYTES.add((byte) 0xa);
+			//BYTES.add((byte) 0xd);
 			for (byte a = 32; a < 127; a++)
 				BYTES.add(a);
 		}
@@ -149,7 +158,11 @@ public class WCharInterpreter implements IStringInterpreter {
 	}
 
 	public boolean isValidChar(byte[] myBytes, long pos) {
-		return preByteCheck(myBytes[(int) pos]) && isValidChar(myBytes[(int) pos+1]);
+		return preByteCheck(myBytes, (int) pos) && isValidChar(myBytes[(int) pos+1]);
+	}
+
+	public boolean doliveUpdate() {
+		return myLiveUpdate;
 	}
 
 }

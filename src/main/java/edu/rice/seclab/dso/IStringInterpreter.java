@@ -27,4 +27,6 @@ public interface IStringInterpreter {
 	public Long getStringLength(byte[] myBytes);
 	public Long getStringLength(byte[] myBytes, Long pos);
 	public Long getStringLength(byte[] myBytes, Long pos, Long end);
+	public void setLiveUpdate(boolean x);
+	boolean doliveUpdate();
 }

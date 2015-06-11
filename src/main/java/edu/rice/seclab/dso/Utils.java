@@ -201,10 +201,11 @@ public class Utils {
 		
 	}
 
-	public static void foundKey(String key, String myFilename, long offset) {
+	public static void foundString(String string, int byteSz, String myFilename, long offset) {
 		String offset_str = unsigned_long_xstr(offset);
+		String sz_str = unsigned_long_xstr(byteSz);
 		synchronized (LOCK_TRICK) {
-			System.out.println(String.format("%s: %s %s", key, myFilename, offset_str));
+			System.out.println(String.format("%s:%s %s %s", myFilename, offset_str, sz_str, string));
 		}
 	}
 

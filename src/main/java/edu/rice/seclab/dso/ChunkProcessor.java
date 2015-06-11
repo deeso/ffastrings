@@ -93,8 +93,9 @@ public class ChunkProcessor extends Thread {
 					byte [] val = new byte[strEndPos.intValue()];
 					System.arraycopy(myChunk, pos.intValue(), val, 0, strEndPos.intValue());
 					StringInfo si = new StringInfo(myFilename, pos+calculateActualOffset(), val, myStringMethods);
-					myKeyInfo.put(pos, si);
-					System.out.println(String.format("Found string @ %08x %s sizeof(%d)", pos+strEndPos, si.toString(), strEndPos.intValue()));
+					myKeyInfo.put(pos+calculateActualOffset(), si);
+					if (myStringMethods.doliveUpdate())
+						Utils.foundString(si.toNoNewLineString(), strEndPos.intValue(), myFilename, pos+strEndPos+myBaseOffset);
 				}
 				pos += (strEndPos+1);
 				matches++;

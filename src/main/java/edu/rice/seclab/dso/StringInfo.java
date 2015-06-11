@@ -61,7 +61,7 @@ public class StringInfo {
 		synchronized (myLocations) {
 			for (String filename : myLocations.keySet()) {
 				for (String location : myLocations.get(filename)) {
-					_results.add(String.format("%s: %s %s", filename, location, myStringMethods.noNewLineString(myBytes, "_")));
+					_results.add(String.format("%s:%s %s", filename, location, myStringMethods.noNewLineString(myBytes)));
 				}
 			}
 		}
@@ -91,10 +91,10 @@ public class StringInfo {
 		return StringUtils.join(grepableFormatList(), "\n");
 	}
 	
-	public String toByFilenameString(){
-		if (numFileHits() == 0) return new String("");
-		return StringUtils.join(accumulateFileLocations(), "\n");
-	}
+//	public String toByFilenameString(){
+//		if (numFileHits() == 0) return new String("");
+//		return StringUtils.join(accumulateFileLocations(), "\n");
+//	}
 
 	public HashSet<String> getFileHits() {
 		HashSet<String> res = new HashSet<String>();
@@ -136,9 +136,27 @@ public class StringInfo {
 	public IStringInterpreter getStringType() {
 		return myStringMethods;
 	}
-	
+	@Override
 	public String toString() {
 		return myStringMethods.printableString(myBytes);
+	}
+	
+	public String toNoNewLineString() {
+		return myStringMethods.noNewLineString(myBytes);
+	}
+	
+	public String toBasicOutput() {
+		String offset_str = Utils.unsigned_long_xstr(myLocation);
+		//String sz_str = Utils.unsigned_long_xstr(myBytes.length);
+		String string = myStringMethods.noNewLineString(myBytes);
+		return String.format("%s: %s %s", myFilename, offset_str, string);
+	}
+	
+	public String toOutputStringWithLength() {
+		String offset_str = Utils.unsigned_long_xstr(myLocation);
+		String sz_str = Utils.unsigned_long_xstr(myBytes.length);
+		String string = myStringMethods.noNewLineString(myBytes);
+		return String.format("%s: %s %s %s", myFilename, offset_str, sz_str, string);
 	}
 	
 }

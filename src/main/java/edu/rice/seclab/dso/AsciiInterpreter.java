@@ -14,6 +14,7 @@ public class AsciiInterpreter implements IStringInterpreter {
 	static int CHAR_SIZE = 1;
 	static long min_len = 4;
 	static long max_len = Integer.MAX_VALUE;
+	private boolean myLiveUpdate;
 
 	public String getEncoding() {
 		return ENCODING;
@@ -28,8 +29,8 @@ public class AsciiInterpreter implements IStringInterpreter {
 			WHITE_SPACE.add((byte) 0xd);
 			WHITE_SPACE.add((byte) 32);
 			BYTES.add((byte) 0x9);
-			BYTES.add((byte) 0xa);
-			BYTES.add((byte) 0xd);
+			//BYTES.add((byte) 0xa);
+			//BYTES.add((byte) 0xd);
 			for (byte a = 32; a < 127; a++)
 				BYTES.add(a);
 		}
@@ -73,7 +74,7 @@ public class AsciiInterpreter implements IStringInterpreter {
 		return noNewLineString(myBytes, "--linebreak--");
 	}
 	public String noNewLineString(byte[] myBytes, String replace) {
-		return printableString(myBytes).replace("\n", replace);
+		return printableString(myBytes).replace("\r", replace).replace("\n", replace);
 	}
 
 	public byte[] hashAs(byte[] myBytes, String hashAlgo) {
@@ -143,6 +144,13 @@ public class AsciiInterpreter implements IStringInterpreter {
 	public Long getStringLength(byte[] myBytes, Long pos, Long end) {
 		Long cnt = getLength(myBytes, pos, end);
 		return cnt/CHAR_SIZE;
+	}
+
+	public void setLiveUpdate(boolean x) {
+		myLiveUpdate = x;
+	}
+	public boolean doliveUpdate() {
+		return myLiveUpdate;
 	}
 
 }
