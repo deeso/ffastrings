@@ -29,29 +29,18 @@ public class Ffastrings {
 	@SuppressWarnings("deprecation")
 	ArrayList<File> myTargetFiles = null;
 	public static final String MIN_STRING_LEN = "minStringLen";
-	public static final String KEY_COUNT_OUTPUT = "keyCountOutput";
 	public static final String BINARY_FILE = "binaryFile";
 	public static final String LIVE_UPDATE = "liveUpdate";
-	public static final String GREP_OUTPUT = "grepOutput";
 	public static final String BASIC_OUTPUT = "basicOutput";
 	public static final String OUTPUT_WITH_BYTE_LENGTH = "outputWithByteLength";
-	public static final String ENABLE_UNCONSTRAINED_READ = "enableUnconstrainedRead";
-
 	private static final String START_OFFSET = "startOffset";
-
 	public static final String NUM_THREADS = "numThreads";
 
-	public static final String BINARY_STRING_FILE = "binaryStrings";
 	public static final String HELP_ME = "help";
 
 	static Option myHelpOption = new Option(HELP_ME, "print the help message");
 	static Option myLiveUpdateOption = new Option(LIVE_UPDATE,
 			"produce a live update on each hit");
-
-	@SuppressWarnings("static-access")
-	static Option myBinaryStringFileOption = OptionBuilder.withArgName("file")
-			.hasArg().withDescription("use given file for log")
-			.create(BINARY_STRING_FILE);
 
 	@SuppressWarnings("static-access")
 	static Option myNumThreadsOption = OptionBuilder
@@ -75,21 +64,6 @@ public class Ffastrings {
 			.create(BINARY_FILE);
 
 	@SuppressWarnings("static-access")
-	static Option myDisableUnconstrainedReadOption = OptionBuilder
-			.withDescription(
-					"memory is plentiful, read all a chunk before scanning it (read chunks as needed)")
-			.create(ENABLE_UNCONSTRAINED_READ);
-
-	@SuppressWarnings("static-access")
-	static Option myKeyCountFileOption = OptionBuilder.withArgName("file")
-			.hasArg().withDescription("output key counts file")
-			.create(KEY_COUNT_OUTPUT);
-
-	@SuppressWarnings("static-access")
-	static Option myGrepableOutput = OptionBuilder.withArgName("file").hasArg()
-			.withDescription("grepable output file").create(GREP_OUTPUT);
-
-	@SuppressWarnings("static-access")
 	static Option myOffsetOption = OptionBuilder
 			.withArgName("offset")
 			.hasArg()
@@ -100,22 +74,20 @@ public class Ffastrings {
 	@SuppressWarnings("static-access")
 	static Option myBasicOutput = OptionBuilder.withArgName("file")
 			.hasArg()
-			.withDescription("print output the format: filename:hex_offset data_string")
+			.withDescription("print output the format: filename: hex_offset data_string")
 			.create(BASIC_OUTPUT);
 	
 	@SuppressWarnings("static-access")
 	static Option myOutputWithByteLengthOption = OptionBuilder.withArgName("file")
 			.hasArg()
-			.withDescription("print output the format: filename:hex_offset hex_byte_length data_string")
+			.withDescription("print output the format: filename: hex_offset hex_strlen_in_bytes data_string")
 			.create(OUTPUT_WITH_BYTE_LENGTH);
 	
 	public static Options myOptions = new Options()
-			.addOption(myBinaryStringFileOption).addOption(myNumThreadsOption)
+			.addOption(myNumThreadsOption)
 			.addOption(myOffsetOption).addOption(myMemDumpFileOption)
 			.addOption(myHelpOption).addOption(myLiveUpdateOption)
-			.addOption(myGrepableOutput).addOption(myBasicOutput)
-			.addOption(myKeyCountFileOption)
-			.addOption(myDisableUnconstrainedReadOption)
+			.addOption(myBasicOutput)
 			.addOption(myMinStringLenOption).addOption(myOutputWithByteLengthOption);
 
 	// Hash Table mapping hash values to key bytes
@@ -422,10 +394,6 @@ public class Ffastrings {
 
 		if (fbs != null) {
 			fbs.executeFileScans();
-			if (cli.hasOption(GREP_OUTPUT)) {
-				File f = new File(cli.getOptionValue(GREP_OUTPUT));
-				Utils.writeOutputFile(f, fbs.getGreppableOutput());
-			}
 			if (cli.hasOption(BASIC_OUTPUT)) {
 				File f = new File(cli.getOptionValue(BASIC_OUTPUT));
 				Utils.writeOutputFile(f, fbs.getBasicOutput());
