@@ -281,7 +281,11 @@ public class Ffastrings {
 		}
 		boolean exit = myThreadFutures.isEmpty();
 		while (!exit) {
-			Set<String> filename_keys = myThreadFutures.keySet(); 
+			Set<String> filename_keys = new HashSet<String>();
+			synchronized (myThreadFutures) {
+				for (String key : myThreadFutures.keySet())
+					filename_keys.add(key); 				
+			}
 			for (String filename_key : filename_keys) {
 				ArrayList<Future<?>> value = myThreadFutures.get(filename_key);
 				int idx = 0;
@@ -314,6 +318,9 @@ public class Ffastrings {
 					e.printStackTrace();
 				}
 			}
+			System.out.println(String.format("Waiting on %d files to complete",
+					   myThreadFutures.size()));
+
 			exit = myThreadFutures.isEmpty();
 		}
 		myExecutor.shutdown();
