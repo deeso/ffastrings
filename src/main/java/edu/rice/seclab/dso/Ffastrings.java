@@ -306,8 +306,8 @@ public class Ffastrings {
 					synchronized (myThreadFutures) {
 						myThreadFutures.put(filename_key, new_value);
 					}					
-					System.out.println(String.format("Waiting on %d threads to complete for %s",
-							   new_value.size(), filename_key));
+					//System.out.println(String.format("Waiting on %d threads to complete for %s",
+					//		   new_value.size(), filename_key));
 				}
 			}
 			if (myThreadFutures.size() == 1) {	
@@ -318,8 +318,8 @@ public class Ffastrings {
 					e.printStackTrace();
 				}
 			}
-			System.out.println(String.format("Waiting on %d files to complete",
-					   myThreadFutures.size()));
+			//System.out.println(String.format("Waiting on %d files to complete",
+			//		   myThreadFutures.size()));
 
 			exit = myThreadFutures.isEmpty();
 		}
