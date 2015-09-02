@@ -155,6 +155,16 @@ public class Ffastrings {
 		}
 	}
 	
+	private void writeBasicOutput(ArrayList<String> output) {
+		for (String o : output)
+			writeBasicOutput(o+"\n");
+		
+	}
+	private void writeOutputWithLength(ArrayList<String> output) {
+		for (String o : output)
+			writeOutputWithLength(o+"\n");
+		
+	}
 	private void writeOutputWithLength(String output) {
 		if (OutputFileWithLength!=null) {
 			try {
@@ -350,7 +360,7 @@ public class Ffastrings {
 	}
 
 	private void performDumpOnFileKey(String filename_key) {
-		String output = getBasicOutput(filename_key);
+		ArrayList<String> output = getBasicOutput(filename_key);
 		writeBasicOutput(output);
 		output = getOutputWithLength(filename_key);
 		writeOutputWithLength(output);
@@ -370,15 +380,16 @@ public class Ffastrings {
 		return StringUtils.join(output, "\n") + "\n";
 	}
 
-	public String getBasicOutput() {
-		StringBuffer sb = new StringBuffer();
+	public ArrayList<String> getBasicOutput() {
+		ArrayList<String> list = new ArrayList<String>();
 		for (String key : myStringInfoMap.keySet()) {
-			sb.append(getBasicOutput(key));
+			for (String r : getBasicOutput(key))
+				list.add(r);
 		}
-		return sb.toString();
+		return list;
 	}
 	
-	public String getBasicOutput(String key) {
+	public ArrayList<String> getBasicOutput(String key) {
 		HashMap<Long, StringInfo> si_hm = myStringInfoMap.get(key);
 		ArrayList<String> output = new ArrayList<String>();
 		for (StringInfo bsi : si_hm.values()) {
@@ -387,18 +398,20 @@ public class Ffastrings {
 				output.add(s);
 		}
 		Collections.sort(output);
-		return StringUtils.join(output, "\n") + "\n";
+		return output;
 	}
 	
-	public String getOutputWithLength() {
-		StringBuffer sb = new StringBuffer();
+	public ArrayList<String> getOutputWithLength() {
+		ArrayList<String> list = new ArrayList<String>();
 		for (String key : myStringInfoMap.keySet()) {
-			sb.append(getOutputWithLength(key));
+			for (String i : getOutputWithLength(key)){
+				list.add(i);
+			}
 		}
-		return sb.toString();
+		return list;
 	}
 	
-	public String getOutputWithLength(String key) {
+	public ArrayList<String> getOutputWithLength(String key) {
 		HashMap<Long, StringInfo> si_hm = myStringInfoMap.get(key);
 		ArrayList<String> output = new ArrayList<String>();
 		for (StringInfo bsi : si_hm.values()) {
@@ -408,7 +421,7 @@ public class Ffastrings {
 				output.add(s);
 		}
 		Collections.sort(output);
-		return StringUtils.join(output, "\n") + "\n";
+		return output;
 	}
 
 //	public String getByCountsOutput() {
