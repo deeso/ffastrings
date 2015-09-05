@@ -9,9 +9,11 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -144,10 +146,18 @@ public class Ffastrings {
 	}
 		
 	
-	private void writeBasicOutput(String output) {
+	private void writeBasicOutput(String filename_key) {
 		if (BasicOutputFile!=null) {
 			try {
-				BasicOutputFile.write(output);
+				HashMap<Long, StringInfo> si_hm = myStringInfoMap.get(filename_key);
+				ArrayList<StringInfo> si = new ArrayList<StringInfo>();
+				for (StringInfo bsi : si_hm.values()) {
+					si.add(bsi);
+				}
+				for (StringInfo bsi : si_hm.values()) {
+					String s = bsi.toBasicOutput();
+					BasicOutputFile.write(s);
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -157,7 +167,13 @@ public class Ffastrings {
 	
 	private void writeBasicOutput(ArrayList<String> output) {
 		for (String o : output)
-			writeBasicOutput(o+"\n");
+			try {
+				BasicOutputFile.write(o);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				break;
+			}
 		
 	}
 	private void writeOutputWithLength(ArrayList<String> output) {
@@ -165,10 +181,19 @@ public class Ffastrings {
 			writeOutputWithLength(o+"\n");
 		
 	}
-	private void writeOutputWithLength(String output) {
+	private void writeOutputWithLength(String filename_key) {
 		if (OutputFileWithLength!=null) {
 			try {
-				OutputFileWithLength.write(output);
+				HashMap<Long, StringInfo> si_hm = myStringInfoMap.get(filename_key);
+				ArrayList<StringInfo> si = new ArrayList<StringInfo>();
+				for (StringInfo bsi : si_hm.values()) {
+					si.add(bsi);
+				}
+				Collections.sort(si);
+				for (StringInfo bsi : si_hm.values()) {
+					String s = bsi.toOutputStringWithLength();
+					OutputFileWithLength.write(s);
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -360,10 +385,10 @@ public class Ffastrings {
 	}
 
 	private void performDumpOnFileKey(String filename_key) {
-		ArrayList<String> output = getBasicOutput(filename_key);
-		writeBasicOutput(output);
-		output = getOutputWithLength(filename_key);
-		writeOutputWithLength(output);
+		ArrayList<String> output = null;//getBasicOutput(filename_key);
+		writeBasicOutput(filename_key);
+		//output = getOutputWithLength(filename_key);
+		writeOutputWithLength(filename_key);
 	}
 
 	public String getGreppableOutput() {

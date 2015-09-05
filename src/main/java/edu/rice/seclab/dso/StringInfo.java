@@ -1,18 +1,22 @@
 package edu.rice.seclab.dso;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class StringInfo {
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
+public class StringInfo implements Comparable<StringInfo> {
 	long myHash;
 	byte[] myBytes;
 	HashMap<String, HashSet<String>> myLocations = new HashMap<String, HashSet<String>>();
 	IStringInterpreter myStringMethods;
 	Long myLocation;
 	String myFilename;
+	static Integer cum = 0;
 	
 	
 	public StringInfo(String filename, Long location, byte [] value, IStringInterpreter stringMethods) throws Exception {
@@ -149,7 +153,9 @@ public class StringInfo {
 		String offset_str = Utils.unsigned_long_xstr(myLocation);
 		//String sz_str = Utils.unsigned_long_xstr(myBytes.length);
 		String string = myStringMethods.noNewLineString(myBytes);
-		return String.format("%s: %s %s", myFilename, offset_str, string);
+		cum += string.length();
+		System.out.println(String.format("String length = 0x%08x cum = 0x%08x", string.length(), cum));	
+		return String.format("%s: %s ", myFilename, offset_str)+  string;
 	}
 	
 	public String toOutputStringWithLength() {
@@ -158,5 +164,14 @@ public class StringInfo {
 		String string = myStringMethods.noNewLineString(myBytes);
 		return String.format("%s: %s %s %s", myFilename, offset_str, sz_str, string);
 	}
+	
+	@Override
+	public int compareTo(StringInfo o2) {
+		if (getLocation() == o2.getLocation()) return 0;
+		if (getLocation() < o2.getLocation()) return -1;
+		return 1;
+
+	}
+
 	
 }
