@@ -157,6 +157,7 @@ public class Ffastrings {
 				for (StringInfo bsi : si_hm.values()) {
 					String s = bsi.toBasicOutput();
 					BasicOutputFile.write(s);
+					BasicOutputFile.write(s+"\n");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -193,6 +194,7 @@ public class Ffastrings {
 				for (StringInfo bsi : si_hm.values()) {
 					String s = bsi.toOutputStringWithLength();
 					OutputFileWithLength.write(s);
+					OutputFileWithLength.write("\n");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

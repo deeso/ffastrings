@@ -42,9 +42,9 @@ public class WCharInterpreter implements IStringInterpreter {
 
 	public String printableString(byte[] myBytes) {
 		char [] chars = new char[myBytes.length/2];
-		for (int pos = 0; pos < chars.length; pos++)
-			chars[pos] = (char) (myBytes[pos+1] & 0xff);
-		
+		for (int pos = 0; pos < chars.length; pos++) {
+			chars[pos] = (char) ((myBytes[pos*2] << 8) + (myBytes[pos*2+1] & 0xff));;
+		}
 		return new String(chars);
 	}
 
